@@ -12,20 +12,20 @@ LLM quality prompt tester
 
 (installation of dependencies, etc)
 
-Backend
+In the `backend/` directory:
 
 - run `$ pip install -r requirements.txt`
 - run `echo "BACKEND_PORT=8000" > .env`
   - or a port no. of your choice, but must be same set as frontends
 - run backend via `$ fastapi dev main.py`
 
-Frontend
+In the `frontend/` directory:
 
-- run `$ npm install` in `frontend/`
+- run `$ npm install`
 - run `echo "BACKEND_PORT=8000" > .env`
   - or a port no. of your choice, but must be same set as backends
 - run frontend via `$ npm run dev`
 
-## A list of resources you referred or used for this task
+## A list of resources referred or used
 
 ## References
