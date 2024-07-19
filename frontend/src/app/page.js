@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Button from '@mui/material/Button'
-import { API_URL } from '../../config'
-import { Box } from '@mui/system'
+import Button from '@mui/material/Button';
+import { API_URL } from '../../config';
+import { Box } from '@mui/system';
 
 export default function HomePage() {
 
@@ -16,7 +16,6 @@ export default function HomePage() {
         const response = await fetch(`${API_URL}/`);
         const data = await response.json();
         setMessage(data.message);
-        console.log(data.message);
       } catch (error) {
         console.error('Error fetching message:', error);
       }
@@ -33,7 +32,7 @@ export default function HomePage() {
       textAlign: 'center',
       marginTop: '50px',
       width: '100%',
-      fontFamily: ["monospace"]
+      fontFamily: ['monospace'],
     }}>
 
       <h1>Hello, world! Welcome to</h1>
@@ -81,7 +80,7 @@ export default function HomePage() {
       <Link href='/auth/login' passHref>
         <Button variant='contained' color='primary' size='large'>
           <p style={{ fontWeight: 'bold' }}>
-            Let's start!
+            Let&apos;s start!
           </p>
         </Button>
       </Link>

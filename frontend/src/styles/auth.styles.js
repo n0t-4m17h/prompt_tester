@@ -10,7 +10,7 @@ const authButtonDiv = styled('div')({
 
 const AuthStyles = {
   authContent,
-  authButtonDiv
-}
+  authButtonDiv,
+};
 
 export default AuthStyles;
