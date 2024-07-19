@@ -1,0 +1,6 @@
+# [FORMAT]
+# max-line-length=88
+
+# [IMPORTS]
+# # Allow wildcard imports from modules that define __all__.
+# allow-wildcard-with-all=no
