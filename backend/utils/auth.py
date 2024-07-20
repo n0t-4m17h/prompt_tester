@@ -12,7 +12,7 @@ from ..database.models import User
 
 SECRET_KEY = secrets.token_hex(32) # could also create your own & add to .env
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30 # good safety practice in case of compromised user
+ACCESS_TOKEN_EXPIRE_MINUTES = 30 # good safety practice in case of compromised user, also we're using cookies instead of localStorage
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
@@ -65,6 +65,7 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
         if email is None:
             raise credentials_exception
     except JWTError:
+        # raised if token invalid or expired
         raise credentials_exception
     user = get_user(db, email=email)
     if user is None:

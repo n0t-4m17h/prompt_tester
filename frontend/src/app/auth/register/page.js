@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { Button, Alert } from '@mui/material';
 import { Box } from '@mui/system';
 
 import AuthStyles from '@/styles/auth.styles';
-// import { API_URL } from '../../config';
+import { API_URL } from '../../../../config';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -22,7 +24,9 @@ export default function RegisterPage() {
     setAlertData({ ...alertData, show: false });
   };
 
-  const handleRegister = () => {
+  const router = useRouter();
+
+  const handleRegister = async () => {
     // registration input handling logic
     if (email.length === 0 || password.length === 0 || firstname.length === 0 
         || lastname.length === 0) 
@@ -38,7 +42,24 @@ export default function RegisterPage() {
       });
       return;
     }
-    // Registration logic (e.g., API call) goes here
+    // email regex checker??
+    try {
+      // token is stored in httponly cookie, not local storage
+      const resp = await axios.post(`${API_URL}/auth/register`, {
+        firstname,
+        lastname,
+        email,
+        password,
+      });
+      console.log(resp) /////////////////////////////////////////////////////////////////////
+      router.push('/dashboard');
+    } catch (err) {
+      setAlertData({ 
+        show: true,
+        severity: 'error',
+        message: err.response.data.detail || 'Registration failed',
+      });
+    }
   };
 
   return (
@@ -56,7 +77,7 @@ export default function RegisterPage() {
         {
           alertData.show && 
           <Alert 
-            variant="filled"
+            variant='filled'
             severity={alertData.severity}
             onClose={handleCloseAlert}
           >
@@ -67,31 +88,31 @@ export default function RegisterPage() {
           type='text'
           onChange={e => setFirstname(e.target.value)}
           value={firstname}
-          placeholder="Enter your first name"
+          placeholder='Enter your first name'
         /> <br/>
         Last Name: <input
           type='text'
           onChange={e => setLastname(e.target.value)}
           value={lastname}
-          placeholder="Enter your last name"
+          placeholder='Enter your last name'
         /> <br/>
         Email: <input
           type='text'
           onChange={e => setEmail(e.target.value)}
           value={email}
-          placeholder="Enter your email"
+          placeholder='Enter your email'
         /> <br/>
         Password: <input
           type='text'
           onChange={e => setPassword(e.target.value)}
           value={password}
-          placeholder="Enter your password"
+          placeholder='Enter your password'
         /> <br/>
         Confirm Password: <input
           type='text'
           onChange={e => setConfirmPassword(e.target.value)}
           value={confirmPassword}
-          placeholder="Re-enter your password"
+          placeholder='Re-enter your password'
         /> <br/>
 
         <AuthStyles.authButtonDiv>

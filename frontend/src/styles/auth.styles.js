@@ -1,4 +1,4 @@
-import { styled } from '@mui/material';
+import { Button, styled } from '@mui/material';
 
 const authContent = styled('div')({
   // general container
@@ -19,9 +19,16 @@ const authButtonDiv = styled('div')({
   width: '250px',
 });
 
+const colorHoverButton = styled(Button)`
+    :hover {
+        color: black;
+    } 
+`;
+
 const AuthStyles = {
   authContent,
   authButtonDiv,
+  colorHoverButton,
 };
 
 export default AuthStyles;

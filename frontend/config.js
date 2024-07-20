@@ -1,2 +1,7 @@
+import axios from 'axios';
+
 const BACKEND_PORT = process.env.BACKEND_PORT || 8000;
-export const API_URL = `http://127.0.0.1:${BACKEND_PORT}`;
+export const API_URL = `http://127.0.0.1:${BACKEND_PORT}/api`;
+
+// Configure Axios to include credentials/cookies with reqs
+axios.defaults.withCredentials = true;

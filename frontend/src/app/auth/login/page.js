@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 import { Button, Alert } from '@mui/material';
 import { Box } from '@mui/system';
 
 import AuthStyles from '@/styles/auth.styles';
-// import { API_URL } from '../../config';
+import { API_URL } from '../../../../config';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -15,11 +17,13 @@ export default function LoginPage() {
     show: false, severity: 'error', message: '',
   });
 
+  const router = useRouter();
+
   const handleCloseAlert = () => {
     setAlertData({ ...alertData, show: false });
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // login input handling logic
     if (email.length === 0 || password.length === 0) {
       setAlertData({ 
@@ -27,7 +31,21 @@ export default function LoginPage() {
       });
       return;
     }
-    // Registration logic (e.g., API call) goes here
+    // email regex checker??
+    try {
+      // token is stored in httponly cookie, not local storage
+      await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
+      router.push('/dashboard');
+    } catch (err) {
+      setAlertData({ 
+        show: true,
+        severity: 'error',
+        message: err.response.data.detail || 'Login failed',
+      });
+    }
   };
 
   return (
@@ -45,7 +63,7 @@ export default function LoginPage() {
         {
           alertData.show && 
           <Alert 
-            variant="filled"
+            variant='filled'
             severity={alertData.severity}
             onClose={handleCloseAlert}
           >
@@ -56,13 +74,13 @@ export default function LoginPage() {
           type='text'
           onChange={e => setEmail(e.target.value)}
           value={email}
-          placeholder="Enter your email"
+          placeholder='Enter your email'
         /> <br/>
         Password: <input
           type='text'
           onChange={e => setPassword(e.target.value)}
           value={password}
-          placeholder="Enter your password"
+          placeholder='Enter your password'
         /> <br/>
 
         <AuthStyles.authButtonDiv>
