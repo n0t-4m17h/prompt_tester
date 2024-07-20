@@ -23,7 +23,8 @@ Assuming universal packages such as python3 and git are installed- `cd` into `ba
   - create a db for this project, via `postgres=# CREATE DATABASE prompt_tester;`
   - grant your newly created user full access to this db, via `postgres=# GRANT ALL PRIVILEGES ON DATABASE prompt_tester TO <user_name>;`
   - exit postgresql terminal and user session, via `postgres=# \q` and `$ exit`
-- Add your new PostgreSQL credentials to `.env` file, via `$ echo DATABASE_URL=postgresql://<user_name>:<password>@localhost/promp_tester >> .env`
+- Add your new PostgreSQL credentials to `.env` file, via `$ echo DATABASE_URL=postgresql://<user_name>:<password>@localhost/prompt_tester >> .env`
+  - note that the database name is specified as "prompt_tester"
 - run `$ pip install -r requirements.txt`
 - run `$ echo "BACKEND_PORT=8000" >> .env`
   - or a port no. of your choice, but must be same set as frontends
@@ -38,7 +39,7 @@ Assuming universal packages such as node.js is installed- `cd` into `frontend/`,
 
 ## Running the program
 
-- in one terminal, in `backend/`, run `$ fastapi dev backend/main.py`
+- in one terminal, in `backend/`, run `$ sudo service postgresql start` then run `$ fastapi dev main.py`
 - in another terminal, in `frontend/`, run `$ npm run dev`, and open up the displayed URL in your browser
 
 ## A list of resources referred or used

@@ -3,3 +3,5 @@ python-dotenv
 sqlalchemy
 psycopg2-binary
 # pylint
+python-jose[cryptography]
+passlib[bcrypt]
