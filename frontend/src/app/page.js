@@ -1,28 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Button from '@mui/material/Button';
-import { API_URL } from '../../config';
 import { Box } from '@mui/system';
 
+import AuthStyles from '@/styles/auth.styles';
+
 export default function HomePage() {
-
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    const fetchMessage = async () => {
-      try {
-        const response = await fetch(`${API_URL}/`);
-        const data = await response.json();
-        setMessage(data.message);
-      } catch (error) {
-        console.error('Error fetching message:', error);
-      }
-    };
-
-    fetchMessage();
-  }, []);
 
   return (
     <Box sx={{
@@ -75,14 +58,16 @@ export default function HomePage() {
         </p>
       </Box>
 
-      <p>{message}</p>
-
       <Link href='/auth/login' passHref>
-        <Button variant='contained' color='primary' size='large'>
+        <AuthStyles.colorHoverButton 
+          variant='contained' 
+          color='primary' 
+          size='large'
+        >
           <p style={{ fontWeight: 'bold' }}>
             Let&apos;s start!
           </p>
-        </Button>
+        </AuthStyles.colorHoverButton>
       </Link>
     </Box>
   );
