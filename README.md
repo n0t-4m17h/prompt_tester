@@ -41,6 +41,7 @@ Assuming universal packages such as node.js is installed- `cd` into `frontend/`,
 
 - in one terminal, in `backend/`, run `$ sudo service postgresql start` then run `$ fastapi dev main.py`
 - in another terminal, in `frontend/`, run `$ npm run dev`, and open up the displayed URL in your browser
+  - note that `backend/main.py`'s `app.add_middleware()`'s parameter `allow_origins` should be set to your frontend's origin (url).
 
 ## A list of resources referred or used
 

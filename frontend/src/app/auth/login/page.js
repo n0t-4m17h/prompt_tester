@@ -33,17 +33,24 @@ export default function LoginPage() {
     }
     // email regex checker??
     try {
-      // token is stored in httponly cookie, not local storage
+      // token is stored in httponly cookie, not local storage, but stil in resp
       await axios.post(`${API_URL}/auth/login`, {
         email,
         password,
       });
       router.push('/dashboard');
     } catch (err) {
-      setAlertData({ 
-        show: true,
-        severity: 'error',
-        message: err.response.data.detail || 'Login failed',
+      console.error(err);
+      let errorMessage = 'Login failed';
+      if (err.response) {
+        errorMessage = err.response.data.detail || errorMessage;
+      } else if (err.request) {
+        errorMessage = 'No response from the server. Please try again later.';
+      } else {
+        errorMessage = err.message;
+      }
+      setAlertData({
+        show: true, severity: 'error', message: errorMessage,
       });
     }
   };

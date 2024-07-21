@@ -1,10 +1,10 @@
 'use client';
 
 import axios from 'axios';
-import { useRouter } from 'next/router';
-import { API_URL } from '../config';
+import { useRouter } from 'next/navigation';
 
-import Button from '@mui/material/Button';
+import { API_URL } from '../../config';
+import AuthStyles from '@/styles/auth.styles';
 
 export default function LogoutButton() {
   const router = useRouter();
@@ -20,13 +20,15 @@ export default function LogoutButton() {
   };
 
   return (
-    <Button 
+    <AuthStyles.colorHoverButton 
       variant='contained' 
       color='error' 
-      size='medium' 
+      size='large'
       onClick={handleLogout}
     >
-      LOGOUT
-    </Button>
+      <p style={{ fontWeight: 'bold' }}>
+        LOGOUT
+      </p>
+    </AuthStyles.colorHoverButton>
   );
 }

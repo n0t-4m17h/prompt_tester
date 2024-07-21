@@ -5,3 +5,4 @@ psycopg2-binary
 # pylint
 python-jose[cryptography]
 passlib[bcrypt]
+bcrypt==4.0.1 # specifiy this lower ver to avoid terminal error shown (their fault)

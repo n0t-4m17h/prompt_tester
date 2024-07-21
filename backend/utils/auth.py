@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import secrets
@@ -49,7 +49,7 @@ def get_user(db: Session, email: str):
     """
     return db.query(User).filter(User.email == email).first()
 
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)):
+def get_current_user(request: Request, db: Session = Depends(get_db)):
     """
     Get the info of the logged in user from token
     Is a dependency injection unlike get_user()
@@ -60,6 +60,9 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth2_
         headers={"WWW-Authenticate": "Bearer"}, # OAuth2 specification
     )
     try:
+        token = request.cookies.get("access_token")
+        if not token:
+            raise credentials_exception
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:

@@ -13,3 +13,8 @@ class AuthLogin(BaseModel):
 class AuthResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+class UserResponse(BaseModel):
+    firstname: str
+    lastname: str
+    email: str

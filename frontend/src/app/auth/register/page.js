@@ -44,16 +44,16 @@ export default function RegisterPage() {
     }
     // email regex checker??
     try {
-      // token is stored in httponly cookie, not local storage
-      const resp = await axios.post(`${API_URL}/auth/register`, {
+      // token is stored in httponly cookie, not local storage, but stil in resp
+      await axios.post(`${API_URL}/auth/register`, {
         firstname,
         lastname,
         email,
         password,
       });
-      console.log(resp) /////////////////////////////////////////////////////////////////////
       router.push('/dashboard');
     } catch (err) {
+      console.log(err);
       setAlertData({ 
         show: true,
         severity: 'error',

@@ -1,6 +1,5 @@
 'use client';
 
-import LogoutButton from '@/components/logout';
 import Navbar from '@/components/navbar';
 import useAuth from '@/hooks/useAuth';
 import useUser from '@/hooks/useUser';
@@ -31,7 +30,6 @@ export default function DashboardPage() {
     <div>
       <Navbar />
       <h1>Welcome to the DASHBOARD Page, {user.firstname} !</h1>
-      <LogoutButton />
     </div>
   );
 }

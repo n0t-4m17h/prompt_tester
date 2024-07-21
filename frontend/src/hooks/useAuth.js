@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { API_URL } from '../../config';
 
 export default function useAuth() {
@@ -12,8 +12,9 @@ export default function useAuth() {
     const checkTokenExpiration = async () => {
       try {
         // axios is configured to include credentials/cookies
-        await axios.get(`${API_URL}/auth/me`);
+        await axios.get(`${API_URL}/auth/me`, {}, { withCredentials: true });
       } catch (err) {
+        console.error('Token validation error:', err);
         router.push('/auth/login');
       }
     };
