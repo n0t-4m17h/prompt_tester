@@ -6,7 +6,9 @@ LLM quality prompt tester
 
 - System Admin will simply have a list of all Paid Users, and every option they also have (hence "...access to all user information...").
   - special set of credentials, no unique UI either (other than list of Paid Users)
-  - maybe just /notadmin route to enter special creds
+  - maybe just /notadmin route to enter special creds?? idk yet
+- Sidebar: Spec only mentions "Prompt Tester" module, so used SideBar to hold previous chats
+- Simplified LLM roles to just User and Assistant, along with a single model (feasibility convenience)
 
 ## Setting up the Program
 
@@ -28,6 +30,7 @@ Assuming universal packages such as python3 and git are installed- `cd` into `ba
 - run `$ pip install -r requirements.txt`
 - run `$ echo "BACKEND_PORT=8000" >> .env`
   - or a port no. of your choice, but must be same set as frontends
+- Sign into [GroqCloud](https://console.groq.com/keys), create an API key, then run `$ echo "GROQ_API_KEY=<key>" >> .env`.
 
 ### Frontend
 
