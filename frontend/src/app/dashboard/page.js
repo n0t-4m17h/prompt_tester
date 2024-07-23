@@ -19,19 +19,17 @@ export default function Dashboard() {
     setAlertData,
     checkTokenExpiration,
   } = useAuthChat();
-  console.log('CHATS 1', chats);
   const [currentChat, setCurrentChat] = useState(null);
   const [chatTitle, setChatTitle] = useState('');
   const [userPrompt, setUserPrompt] = useState('');
   const [parameters, setParameters] = useState({ 
-    tokens: 1024, temperature: 1, 
+    tokens: 1024, temperature: 1, top_p: 1,
   });
   const [isTitleEntered, setIsTitleEntered] = useState(false);
-
+  const [isValidParameters, setIsValidParameters] = useState(true);
 
   useEffect(() => {
     if (currentChat && currentChat.id) {
-      console.log('CHATS 2', chats);
       const selectedChat = chats.find(chat => chat.id === currentChat.id);
       setCurrentChat(selectedChat);
       if (selectedChat.messages && selectedChat.messages.length > 0) {
@@ -42,13 +40,24 @@ export default function Dashboard() {
         setParameters({
           tokens: lastMessage.parameters.tokens,
           temperature: lastMessage.parameters.temperature,
+          top_p: lastMessage.parameters.top_p || 1,
         });
       } else {
         setUserPrompt('');
-        setParameters({ tokens: 1024, temperature: 1 });
+        setParameters({ tokens: 1024, temperature: 1, top_p: 1 });
       }
     }
   }, [chats, currentChat]);
+
+  useEffect(() => {
+    const { tokens, temperature, top_p } = parameters;
+    const isValid = (
+      tokens >= 0 && tokens <= 8192 &&
+      temperature >= 0 && temperature <= 2 &&
+      top_p >= 0 && top_p <= 1
+    );
+    setIsValidParameters(isValid);
+  }, [parameters]);
 
   const handleCloseAlert = () => {
     setAlertData({ ...alertData, show: false });
@@ -58,11 +67,11 @@ export default function Dashboard() {
     setCurrentChat(null);
     setChatTitle('');
     setUserPrompt('');
-    setParameters({ tokens: 1024, temperature: 1 });
+    setParameters({ tokens: 1024, temperature: 1, top_p: 1 });
   };
 
   const handleCreateChat = async () => {
-    // await checkTokenExpiration();
+    await checkTokenExpiration();
     try {
       const response = await axios.post(`${API_URL}/chat/chats`, 
         {
@@ -131,7 +140,6 @@ export default function Dashboard() {
         />
         <Box flex={1} p={3}>
           <Alert alertData={alertData} handleCloseAlert={handleCloseAlert} />
-          {console.log('CURR_CHAT 1', currentChat)}
           <Box display="flex">
             <Box flex={2} p={2}>
               <Typography variant="h5" color="black">System Input</Typography>
@@ -158,14 +166,13 @@ export default function Dashboard() {
                     variant="contained"
                     color="primary"
                     onClick={handleSendPrompt}
-                    disabled={!userPrompt}
+                    disabled={!userPrompt || !isValidParameters}
                   >
                     Enter Prompt
                   </Button>
                 </Box>
               ) : (
-                <Box
-                >
+                <Box>
                   <TextField
                     label="Chat Title"
                     value={chatTitle}
@@ -200,7 +207,9 @@ export default function Dashboard() {
                     variant="contained"
                     color="primary"
                     onClick={handleCreateChat}
-                    disabled={!isTitleEntered || !userPrompt}
+                    disabled={
+                      !isTitleEntered || !userPrompt || !isValidParameters
+                    }
                   >
                     Enter prompt
                   </Button>
@@ -210,7 +219,6 @@ export default function Dashboard() {
             <Box flex={4} p={2}>
               <Typography variant="h5" color="black">Chat History</Typography>
               <Box sx={{ 
-                // height: '100%',
                 maxHeight: '80vh', 
                 overflowY: 'auto', 
                 border: '1px solid gray', 
@@ -222,7 +230,7 @@ export default function Dashboard() {
                     <Box key={message.id} mb={2} 
                       sx={{
                         border: '2px solid darkgray',
-                        backgroundcolor: 'gray',
+                        backgroundColor: 'lightgray',
                       }}>
                       <Typography variant="subtitle1" color="black">
                       USER: {message.user_prompt}
@@ -239,7 +247,8 @@ export default function Dashboard() {
               <Tooltip 
                 title={
                   `The maximum number of tokens to generate. Requests can use 
-                  up to 8192 tokens shared between prompt and completion.`
+                  up to 8192 tokens shared between prompt and completion.
+                  RANGE: 0-8192`
                 } 
                 arrow placement="left"
               >
@@ -268,7 +277,7 @@ export default function Dashboard() {
                 title={
                   `Controls randomness: lowering results in less random
                   completions. As the temperature approaches zero, the model
-                  will become deterministic and repetitive`
+                  will become deterministic and repetitive. RANGE: 0-2`
                 }
                 arrow placement="left"
               >
@@ -278,6 +287,34 @@ export default function Dashboard() {
                   value={parameters.temperature}
                   onChange={(e) => setParameters({
                     ...parameters, temperature: e.target.value,
+                  })}
+                  fullWidth
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{
+                    style: {
+                      color: 'black',
+                    },
+                  }}
+                  InputLabelProps={{
+                    style: { color: 'gray' },
+                  }}
+                  // disabled={!isTitleEntered}
+                />
+              </Tooltip>
+              <Tooltip 
+                title={
+                  `Controls diversity via nucleus sampling: 0.5 means half of
+                  all likelihood-weighted options are considered. RANGE: 0-1`
+                }
+                arrow placement="left"
+              >
+                <TextField
+                  label="Top P"
+                  type="number"
+                  value={parameters.top_p}
+                  onChange={(e) => setParameters({
+                    ...parameters, top_p: e.target.value,
                   })}
                   fullWidth
                   margin="normal"

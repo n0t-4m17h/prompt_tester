@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from typing import List, Optional
 import logging
 
@@ -25,28 +26,32 @@ def create_chat(chat: ChatCreate, db: Session = Depends(get_db), current_user: U
     """
     Create a new chat with an initial message
     """
-    db_chat = Chat(title=chat.title, user_id=current_user.id)
-    db.add(db_chat)
-    db.commit()
-    db.refresh(db_chat)
-
-    parameter = Parameter(tokens=chat.initial_message.parameters.tokens, temperature=chat.initial_message.parameters.temperature)
-    db.add(parameter)
-    db.commit()
-    db.refresh(parameter)
-
-    message = Message(user_prompt=chat.initial_message.user_prompt,
-                        model_response="",
-                        chat_id=db_chat.id,
-                        parameter_id=parameter.id)
-    db.add(message)
-    db.commit()
-    db.refresh(message)
-
-    ###################################
-    #### CONSIDER REFACTORING THIS ####
-    ###################################
     try:
+        db_chat = Chat(title=chat.title, user_id=current_user.id)
+        db.add(db_chat)
+        db.commit()
+        db.refresh(db_chat)
+
+        parameter = Parameter(
+            tokens=chat.initial_message.parameters.tokens, 
+            temperature=chat.initial_message.parameters.temperature,
+            top_p=chat.initial_message.parameters.top_p
+        )
+        db.add(parameter)
+        db.commit()
+        db.refresh(parameter)
+
+        message = Message(user_prompt=chat.initial_message.user_prompt,
+                            model_response="",
+                            chat_id=db_chat.id,
+                            parameter_id=parameter.id)
+        db.add(message)
+        db.commit()
+        db.refresh(message)
+
+        ###################################
+        #### CONSIDER REFACTORING THIS ####
+        ###################################
         from groq import Groq
         from dotenv import load_dotenv
         import os
@@ -71,11 +76,11 @@ def create_chat(chat: ChatCreate, db: Session = Depends(get_db), current_user: U
                 #     "content": "\"Eda Nattoli\" is a popular Malayalam song from the 2000s."
                 # }
             ],
-            # the following parameter values (temp & tokens) will be equal to whatever the most recent message's values are.
+            # the following parameter values (temp & tokens & top_p) will be equal to whatever the most recent message's values are.
             temperature=chat.initial_message.parameters.temperature,
             max_tokens=chat.initial_message.parameters.tokens,
-            top_p=1,
-            stream=False, # not sure what to do about this, will manually test later in frontend
+            top_p=chat.initial_message.parameters.top_p,
+            stream=False, # backend implem convenienve, will come back if time allows
             stop=None,
         )
 
@@ -88,9 +93,22 @@ def create_chat(chat: ChatCreate, db: Session = Depends(get_db), current_user: U
         message.model_response = response_string
         db.commit()
         db.refresh(message)
-    except Exception as e:
-        log_error(current_user.id, db_chat.id, message.id, str(e))
+    except SQLAlchemyError as e:
         db.rollback()
+        log_error(
+            user_id=current_user.id, 
+            chat_id=db_chat.id if "db_chat" in locals() else None, 
+            message_id=None,
+            error_msg=str(e)
+        )
+        raise HTTPException(status_code=500, detail="Database error occurred. Please try again.")
+    except Exception as e:
+        db.rollback()
+        log_error(
+            user_id=current_user.id, 
+            chat_id=db_chat.id if "db_chat" in locals() else None, 
+            message_id=message.id if "message" in locals() else None, 
+            error_msg=str(e))
         raise HTTPException(status_code=500, detail="Error generating LLM response. Please try again.")
 
     return db_chat
@@ -105,23 +123,27 @@ def add_message(chat_id: int, message: MessageCreate, db: Session = Depends(get_
     if not db_chat:
         raise HTTPException(status_code=404, detail="Chat not found")
 
-    parameter = Parameter(tokens=message.parameters.tokens, temperature=message.parameters.temperature)
-    db.add(parameter)
-    db.commit()
-    db.refresh(parameter)
-
-    db_message = Message(user_prompt=message.user_prompt,
-                        model_response="",
-                        chat_id=db_chat.id,
-                        parameter_id=parameter.id)
-    db.add(db_message)
-    db.commit()
-    db.refresh(db_message)
-
-    ###################################
-    #### CONSIDER REFACTORING THIS ####
-    ###################################
+    parameter = Parameter(
+        tokens=message.parameters.tokens,
+        temperature=message.parameters.temperature,
+        top_p=message.parameters.top_p
+    )
     try:
+        db.add(parameter)
+        db.commit()
+        db.refresh(parameter)
+
+        db_message = Message(user_prompt=message.user_prompt,
+                            model_response="",
+                            chat_id=db_chat.id,
+                            parameter_id=parameter.id)
+        db.add(db_message)
+        db.commit()
+        db.refresh(db_message)
+
+        ###################################
+        #### CONSIDER REFACTORING THIS ####
+        ###################################
         from groq import Groq
         from dotenv import load_dotenv
         import os
@@ -145,7 +167,7 @@ def add_message(chat_id: int, message: MessageCreate, db: Session = Depends(get_
             messages=chat_history,
             temperature=message.parameters.temperature,
             max_tokens=message.parameters.tokens,
-            top_p=1,
+            top_p=message.parameters.top_p,
             stream=False,
             stop=None,
         )
@@ -158,9 +180,22 @@ def add_message(chat_id: int, message: MessageCreate, db: Session = Depends(get_
         db_message.model_response = response_string
         db.commit()
         db.refresh(db_message)
-    except Exception as e:
-        log_error(current_user.id, db_chat.id, message.id, str(e))
+    except SQLAlchemyError as e:
         db.rollback()
+        log_error(
+            user_id=current_user.id, 
+            chat_id=db_chat.id if "db_chat" in locals() else None, 
+            message_id=None,
+            error_msg=str(e)
+        )
+        raise HTTPException(status_code=500, detail="Database error occurred. Please try again.")
+    except Exception as e:
+        db.rollback()
+        log_error(
+            user_id=current_user.id, 
+            chat_id=db_chat.id if "db_chat" in locals() else None, 
+            message_id=message.id if "message" in locals() else None, 
+            error_msg=str(e))
         raise HTTPException(status_code=500, detail="Error generating LLM response. Please try again.")
 
     return db_message

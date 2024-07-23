@@ -54,7 +54,6 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
     Get the info of the logged in user from token
     Is a dependency injection unlike get_user()
     """
-    print("GOTCHA")
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -64,19 +63,14 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
         token = request.cookies.get("access_token")
         if not token:
             raise credentials_exception
-        print("GOTCHA 2")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-        print("GOTCHA 3")
     except JWTError:
         # raised if token invalid or expired
-        print("GOTCHA 4")
         raise credentials_exception
     user = get_user(db, email=email)
     if user is None:
-        print("GOTCHA 5")
         raise credentials_exception
-    print("GOTCHA 6")
     return user

@@ -4,9 +4,10 @@ LLM quality prompt tester
 
 ## Assumptions and Resolutions
 
-- System Admin will simply have a list of all Paid Users, and every option they also have (hence "...access to all user information...").
-  - special set of credentials, no unique UI either (other than list of Paid Users)
-  - maybe just /notadmin route to enter special creds?? idk yet
+- System Admin has the same feature accessibility as a Paid user, therefore I've decided to conflate the two.
+  - Possibly, could support the end user description, "...access to all user information...", by providing system admin UI login with a page of all existing users.
+  - could be done via a pre-registered special set of credentials (will require small backend alterations for this)
+  - at the same time, all information can be accessed by system admin by swiping the database + logs, so UI seems redundant, unless nothing else to do.
 - Sidebar: Spec only mentions "Prompt Tester" module, so used SideBar to hold previous chats
 - Simplified LLM roles to just User and Assistant, along with a single model (feasibility convenience)
 

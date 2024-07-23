@@ -24,7 +24,7 @@ export default function LoginPage() {
   useEffect(() => {
 
     const error = searchParams.get('error');
-    console.log('ERROR', error);
+    console.error('ERROR', error);
     if (error) {
       setAlertData({ show: true, severity: 'error', message: error });
     }

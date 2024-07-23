@@ -1,9 +1,10 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 class ParameterCreate(BaseModel):
     tokens: int
     temperature: float
+    top_p: float
 
 class MessageCreate(BaseModel):
     user_prompt: str

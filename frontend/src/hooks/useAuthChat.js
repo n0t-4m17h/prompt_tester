@@ -19,14 +19,12 @@ export default function useAuthChat() {
         `${API_URL}/auth/me`, {}, 
         { withCredentials: true }
       );
-      console.log('USER', response);
       setUser(response.data);
 
       const chatsResponse = await axios.get(
         `${API_URL}/chat/chats`, {},
         { withCredentials: true }
       );
-      console.log('CHATS', chatsResponse);
       setChats(chatsResponse.data);
     } catch (err) {
       console.error('Token validation error:', err);

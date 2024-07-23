@@ -36,5 +36,6 @@ class Parameter(Base):
     id = Column(Integer, primary_key=True, index=True)
     tokens = Column(Integer)
     temperature = Column(Float)
+    top_p = Column(Float)
     # each message can only have one set of params
     message = relationship("Message", back_populates="parameters", uselist=False)

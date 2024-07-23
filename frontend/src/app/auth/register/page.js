@@ -54,7 +54,7 @@ export default function RegisterPage() {
       });
       router.push('/dashboard');
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setAlertData({ 
         show: true,
         severity: 'error',
