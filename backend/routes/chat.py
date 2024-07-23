@@ -11,7 +11,7 @@ from ..utils.logging import log_error
 
 router = APIRouter()
 
-@router.get("/chats", response_model=List[ChatResponse])
+@router.get("/chats", response_model=List[ChatDetailResponse])
 def get_chats(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
     Get all chats for the current user

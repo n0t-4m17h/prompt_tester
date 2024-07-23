@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
-import { Button, Alert } from '@mui/material';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@mui/material';
 import { Box } from '@mui/system';
 
 import AuthStyles from '@/styles/auth.styles';
+import Alert from '@/components/alert';
 import { API_URL } from '../../../../config';
 
 export default function LoginPage() {
@@ -18,6 +19,16 @@ export default function LoginPage() {
   });
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+
+    const error = searchParams.get('error');
+    console.log('ERROR', error);
+    if (error) {
+      setAlertData({ show: true, severity: 'error', message: error });
+    }
+  }, [router, searchParams]);
 
   const handleCloseAlert = () => {
     setAlertData({ ...alertData, show: false });
@@ -67,16 +78,7 @@ export default function LoginPage() {
     }}>
       <h1>Login to your account!</h1>
       <AuthStyles.authContent>
-        {
-          alertData.show && 
-          <Alert 
-            variant='filled'
-            severity={alertData.severity}
-            onClose={handleCloseAlert}
-          >
-            {alertData.message}
-          </Alert>
-        }
+        <Alert alertData={alertData} handleCloseAlert={handleCloseAlert} />
         Email: <input
           type='text'
           onChange={e => setEmail(e.target.value)}

@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import { Button, Alert } from '@mui/material';
+import { Button } from '@mui/material';
 import { Box } from '@mui/system';
 
 import AuthStyles from '@/styles/auth.styles';
+import Alert from '@/components/alert';
 import { API_URL } from '../../../../config';
 
 export default function RegisterPage() {
@@ -74,16 +75,7 @@ export default function RegisterPage() {
     }}>
       <h1>Register your account!</h1>
       <AuthStyles.authContent>
-        {
-          alertData.show && 
-          <Alert 
-            variant='filled'
-            severity={alertData.severity}
-            onClose={handleCloseAlert}
-          >
-            {alertData.message}
-          </Alert>
-        }
+        <Alert alertData={alertData} handleCloseAlert={handleCloseAlert} />
         First Name: <input
           type='text'
           onChange={e => setFirstname(e.target.value)}

@@ -16,6 +16,7 @@ export default function HomePage() {
       marginTop: '50px',
       width: '100%',
       fontFamily: ['monospace'],
+      height: '100%',
     }}>
 
       <h1>Hello, world! Welcome to</h1>

@@ -33,7 +33,7 @@ def register(user: AuthRegister, response: Response, db: Session = Depends(get_d
         key="access_token", 
         value=access_token, 
         httponly=True, 
-        samesite="None",
+        samesite="none",
         secure=True
     )
     return {"access_token": access_token, "token_type": "bearer"}
@@ -51,7 +51,7 @@ def login(user: AuthLogin, response: Response, db: Session = Depends(get_db)):
         key="access_token", 
         value=access_token, 
         httponly=True, 
-        samesite="None",
+        samesite="none",
         secure=True
     )
     return {"access_token": access_token, "token_type": "bearer"}
@@ -61,7 +61,7 @@ def logout(response: Response):
     """
     Logout user, and clear the token cookie
     """
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="access_token", samesite="None", secure=True)
     return {"msg": "Successfully logged out"}
 
 @router.get("/me", response_model=UserResponse, responses={401: {"model": UnauthorizedException}})
