@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 
-from ..models.auth import AuthRegister, AuthLogin, AuthResponse, UserResponse
-from ..models.exceptions import BadRequestException, UnauthorizedException, ServerErrorException
-from ..utils.auth import get_password_hash, create_access_token, verify_password, get_current_user
-from ..database.session import get_db
-from ..database.models import User
-from ..utils.logging import log_error
+from models.auth import AuthRegister, AuthLogin, AuthResponse, UserResponse
+from models.exceptions import BadRequestException, UnauthorizedException, ServerErrorException
+from utils.auth import get_password_hash, create_access_token, verify_password, get_current_user
+from database.session import get_db
+from database.models import User
+# from utils.logging import log_error
 
 router = APIRouter()
 

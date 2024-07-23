@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from typing import List, Optional
-import logging
+from typing import List #, Optional
+# import logging
 
-from ..models.chat import ChatCreate, ChatResponse, MessageCreate, ChatDetailResponse, MessageResponse
-from ..database.session import get_db
-from ..utils.auth import get_current_user
-from ..database.models import User, Chat, Message, Parameter
-from ..utils.logging import log_error
+from models.chat import ChatCreate, MessageCreate, ChatDetailResponse, MessageResponse
+from database.session import get_db
+from utils.auth import get_current_user
+from database.models import User, Chat, Message, Parameter
+from utils.logging import log_error
 
 router = APIRouter()
 

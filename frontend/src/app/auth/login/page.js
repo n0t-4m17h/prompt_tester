@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -11,7 +11,7 @@ import AuthStyles from '@/styles/auth.styles';
 import Alert from '@/components/alert';
 import { API_URL } from '../../../../config';
 
-export default function LoginPage() {
+function LoginPageComponent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alertData, setAlertData] = useState({ 
@@ -110,5 +110,14 @@ export default function LoginPage() {
       </AuthStyles.authContent>
       
     </Box>
+  );
+}
+
+// suspence issue due to search params
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageComponent />
+    </Suspense>
   );
 }

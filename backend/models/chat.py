@@ -14,11 +14,6 @@ class ChatCreate(BaseModel):
     title: str
     initial_message: MessageCreate
 
-class ChatResponse(BaseModel):
-    id: int
-    title: str
-    user_id: int
-
 class MessageResponse(BaseModel):
     id: int
     user_prompt: str
