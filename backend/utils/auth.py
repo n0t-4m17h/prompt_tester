@@ -7,8 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import secrets
 
-from ..database.session import get_db
-from ..database.models import User
+from database.session import get_db
+from database.models import User
 
 SECRET_KEY = secrets.token_hex(32) # could also create your own & add to .env
 ALGORITHM = "HS256"
